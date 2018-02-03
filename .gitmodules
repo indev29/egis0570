@@ -1,0 +1,3 @@
+[submodule "libfprint"]
+	path = libfprint
+	url = ./libfprint
