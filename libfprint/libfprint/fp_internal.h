@@ -311,6 +311,9 @@ extern struct fp_img_driver vfs0050_driver;
 #ifdef ENABLE_ELAN
 extern struct fp_img_driver elan_driver;
 #endif
+#ifdef ENABLE_EGIS0570
+extern struct fp_img_driver egis0570_driver;
+#endif
 
 extern libusb_context *fpi_usb_ctx;
 extern GSList *opened_devices;

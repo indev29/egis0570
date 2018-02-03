@@ -4,25 +4,26 @@
 #include <string.h>
 #include <libusb.h>
 #include <fp_internal.h>
+#include <glib.h>
 
 #include "egis0570.h"
 #include "driver_ids.h"
 
-static struct egis_dev
+struct egis_dev
 {
-	g_boolean running;
-	g_boolean stop;
-	struct * fp_img img;
-}
+	gboolean running;
+	gboolean stop;
+	struct fp_img * img;
+};
 
-static struct transfer_user_data
+struct transfer_user_data
 {
 	struct fpi_ssm * ssm;
-	pkt_types pkt_type;
+	int pkt_type;
 	int pkt_num;
 };
 
-static enum loop_states
+enum loop_states
 {
 	LOOP_INIT,
 	LOOP_INIT_CAPTURE_DONE,
@@ -31,31 +32,31 @@ static enum loop_states
 	LOOP_STATES_NUM
 };
 
-static enum pkt_types
+enum pkt_types
 {
 	PKT_INIT,
 	PKT_REPEAT
 };
 
-static g_boolean is_last_pkt(pkt_types type, int num)
+static gboolean is_last_pkt(int type, int num)
 {
-	g_boolean r;
+	gboolean r;
 	r = ((type == PKT_INIT) && (num < (EGIS0570_INIT_TOTAL - 1)));
 	r |= ((type == PKT_REPEAT) && (num < (EGIS0570_REPEAT_TOTAL - 1)));
 	return r;
 }
 
-static struct transfer_user_data * alloc_transfer_data(struct fpi_ssm * ssm, pkt_types pkt_type, int pkt_num)
+static struct transfer_user_data * alloc_transfer_data(struct fpi_ssm * ssm, int pkt_type, int pkt_num)
 {
 	struct transfer_user_data * cb_data = g_malloc0(sizeof(struct transfer_user_data));
 	cb_data -> ssm = ssm;
-	cb_data -> pkt_type = type;
-	cb_data -> pkt_num = num;
+	cb_data -> pkt_type = pkt_type;
+	cb_data -> pkt_num = pkt_num;
 
 	return cb_data;
 }
 
-static void * get_pkt_ptr(pkt_types type, int num)
+static void * get_pkt_ptr(int type, int num)
 {
 	unsigned char * ptr;
 	if (type == PKT_INIT)
@@ -65,6 +66,9 @@ static void * get_pkt_ptr(pkt_types type, int num)
 
 	return ptr;
 }
+
+static void send_pkt(struct fpi_ssm *, int, int);
+static void recv_pkt(struct fpi_ssm *, int, int);
 
 static void recv_pkt_cb(struct libusb_transfer * transfer)
 {
@@ -79,7 +83,6 @@ static void recv_pkt_cb(struct libusb_transfer * transfer)
 	{
 		if (is_last_pkt(cb_data->pkt_type, cb_data->pkt_num) == FALSE)
 		{
-			g_free(transfer -> buffer); /* We won't free the buffer of the last packet as it contains img */
 			send_pkt(ssm, cb_data->pkt_type, cb_data->pkt_num + 1);
 		}
 		else
@@ -90,14 +93,17 @@ static void recv_pkt_cb(struct libusb_transfer * transfer)
 			fpi_imgdev_report_finger_status(dev, 1); /*TEMPORARILY PASS 1 HERE, FINGER CHECK NEEDED*/
 			fpi_imgdev_image_captured(dev, img);
 			fpi_ssm_next_state(ssm);
+			goto img_out;
 		}
 	}
 
+	g_free(transfer -> buffer);
+img_out: /* We won't free the buffer of the last packet as it contains img */
 	g_free(cb_data);
 	libusb_free_transfer(transfer);
 }
 
-static void recv_pkt(struct fpi_ssm * ssm, pkt_types type, int num)
+static void recv_pkt(struct fpi_ssm * ssm, int type, int num)
 {
 	struct fp_img_dev * dev = ssm -> priv;
 	struct egis_dev * egdev = dev -> priv;
@@ -121,7 +127,7 @@ static void recv_pkt(struct fpi_ssm * ssm, pkt_types type, int num)
 	{
 		struct fp_img * img = fpi_img_new_for_imgdev(dev);
 		egdev->img = img;
-		data = img;
+		data = img -> data;
 		length = img -> length;
 	}
 	struct transfer_user_data * cb_data = alloc_transfer_data(ssm, type, num);
@@ -141,7 +147,7 @@ static void send_pkt_cb(struct libusb_transfer * transfer)
 {
 	struct transfer_user_data * cb_data = transfer -> user_data;
 	struct fpi_ssm * ssm = cb_data -> ssm;
-	pkt_types pkt_type = cb_data -> pkt_type;
+	int pkt_type = cb_data -> pkt_type;
 	int pkt_num = cb_data -> pkt_num;
 
 	if (transfer->status != LIBUSB_TRANSFER_COMPLETED)
@@ -153,7 +159,7 @@ static void send_pkt_cb(struct libusb_transfer * transfer)
 	recv_pkt(ssm, pkt_type, pkt_num);
 }
 
-static void send_pkt(struct fpi_ssm * ssm, pkt_types type, int num)
+static void send_pkt(struct fpi_ssm * ssm, int type, int num)
 {
 	struct fp_img_dev * dev = ssm -> priv;
 	struct libusb_transfer *transfer = libusb_alloc_transfer(0);
@@ -235,9 +241,9 @@ static int dev_activate(struct fp_img_dev *dev, enum fp_imgdev_state state)
 
 static void dev_deactivate(struct fp_img_dev *dev)
 {
-	struct egis_dev *egdev = dev->priv;
-	if (vdev -> running)
-		vdev -> stop = TRUE;
+	struct egis_dev * egdev = dev->priv;
+	if (egdev -> running)
+		egdev -> stop = TRUE;
 	else
 		fpi_imgdev_deactivate_complete(dev);
 }
@@ -263,11 +269,11 @@ static int dev_open(struct fp_img_dev *dev, unsigned long driver_data)
 	/* Propably reset the device?
 	libusb_reset_device(handle);
 	*/
-	struct egis_dev egdev = g_malloc0(struct egis_dev);
+	struct egis_dev * egdev = g_malloc0(sizeof(struct egis_dev));
 	egdev -> running = FALSE;
 	egdev -> stop = FALSE;
 	egdev -> img = NULL;
-	dev -> priv = egdev;
+	dev -> priv = (void *)egdev;
 	fpi_imgdev_open_complete(dev, 0);
 	return 0;
 }
@@ -284,7 +290,7 @@ static const struct usb_id id_table[] = {
 	{ 0, 0, 0, },
 };
 
-struct fp_img_driver uru4000_driver = {
+struct fp_img_driver egis0570_driver = {
 	.driver = {
 		.id = EGIS0570_ID,
 		.name = FP_COMPONENT,

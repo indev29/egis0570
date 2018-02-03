@@ -31,7 +31,7 @@
 #define EGIS0570_PKTSIZE 7
 
 #define EGIS0570_INIT_TOTAL (sizeof((init_pkts)) / sizeof((init_pkts[0])))
-static const unsigned char init_pkts[][EGIS0570_PKTSIZE] =
+static unsigned char init_pkts[][EGIS0570_PKTSIZE] =
 {
 	{ 0x45, 0x47, 0x49, 0x53, 0x01, 0x20, 0x3f },
 	{ 0x45, 0x47, 0x49, 0x53, 0x01, 0x58, 0x3f },
@@ -75,7 +75,7 @@ static const unsigned char init_pkts[][EGIS0570_PKTSIZE] =
  * Have no idea what the other 3 bytes mean
  */
 #define EGIS0570_REPEAT_TOTAL (sizeof((repeat_pkts)) / sizeof((repeat_pkts[0])))
-static const unsigned char repeat_pkts[][EGIS0570_PKTSIZE] =
+static unsigned char repeat_pkts[][EGIS0570_PKTSIZE] =
 {
 	{ 0x45, 0x47, 0x49, 0x53, 0x01, 0x02, 0x0f },
 	{ 0x45, 0x47, 0x49, 0x53, 0x00, 0x02, 0x0f },

@@ -423,6 +423,7 @@ if test x$enable_elan != xno ; then
 	AC_MSG_NOTICE([** elan driver enabled])
 else
 	AC_MSG_NOTICE([   elan driver disabled])
+fi
 if test x$enable_egis0570 != xno ; then
 	AC_MSG_NOTICE([** egis0570 driver enabled])
 else
