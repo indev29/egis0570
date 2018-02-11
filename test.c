@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>	
 
 #include "misc.h"
 #include "init.h"
@@ -13,11 +14,31 @@
 #define DEV_EPOUT 0x04
 #define DEV_EPIN 0x83
 
+int _num = 0;
+
 void printData(unsigned char * data, int length)
 {
 	for (int i = 0; i < length; ++i)
 		printf("%#04x ", data[i]);
 	printf("\n");
+}
+
+void finger_status(unsigned char * data)
+{
+
+}
+
+void writeRaw(const char * filename, unsigned char * data, int length)
+{
+	FILE * fp = fopen(filename, "w");
+	if (fp == NULL)
+	{
+		perror("Error opening file");
+		return;
+	}
+	fwrite(data, sizeof(unsigned char), length, fp);
+
+	fclose(fp);
 }
 
 void writeImg(const char * filename, unsigned char * data, int width, int height)
@@ -57,15 +78,17 @@ void writeImg(const char * filename, unsigned char * data, int width, int height
 
 void imgInfo(unsigned char * data, int length)
 {
+	int res = 0;
 	int min = data[0], max = data[0];
 	for (int i = 0; i < length; ++i)
 	{
+		res += data[i];
 		if (data[i] < min)
 			min = data[i];
 		if (data[i] > max)
 			max = data[i];
 	}
-	printf("min: %d | max: %d\n", min, max);
+	printf("min: %d | max: %d | avg: %d\n", min, max, res / length);
 }
 
 int main(int argc, char * argv[])
@@ -95,7 +118,6 @@ int main(int argc, char * argv[])
 	
 	int initLen = sizeof(init) / sizeof(init[0]);
 	int initPktSize = sizeof(init[0]);
-
 	unsigned char data[32512];
 	int length = sizeof(data);
 	int transferred;
@@ -109,21 +131,34 @@ int main(int argc, char * argv[])
 		//printf("Read %d\n", transferred);
 	}
 	imgInfo(data, transferred);
+
+	writeRaw("scans/raw.bin", data, transferred);
 	// 1 bpp
+	writeImg("scans/254x128.pgm", data, 254, 128);
+	writeImg("scans/256x127.pgm", data, 256, 127);
+	writeImg("scans/508x64.pgm", data, 508, 64);
+	writeImg("scans/1016x32.pgm", data, 1016, 32);
+	writeImg("scans/2032x16.pgm", data, 2032, 16);
+
+	writeImg("scans/128x254.pgm", data, 128, 254);
+	writeImg("scans/127x256.pgm", data, 127, 256);
+	writeImg("scans/64x508.pgm", data, 64, 508);
+	writeImg("scans/32x1016.pgm", data, 32, 1016);
+	writeImg("scans/16x2032.pgm", data, 16, 2032);
 
 	// 0.5 bpp
-	/*writeImg("scans/min/0_32x2032.pbm", data, 32, 2032);
-	writeImg("scans/min/0_64x1016.pbm", data, 64, 1016);
-	writeImg("scans/min/0_127x512.pbm", data, 127, 512);
-	writeImg("scans/min/0_128x508.pbm", data, 128, 508);
-	writeImg("scans/min/0_254x256.pbm", data, 254, 256);
+	/*writeImg("scans/min/0_32x2032.pgm", data, 32, 2032);
+	writeImg("scans/min/0_64x1016.pgm", data, 64, 1016);
+	writeImg("scans/min/0_127x512.pgm", data, 127, 512);
+	writeImg("scans/min/0_128x508.pgm", data, 128, 508);
+	writeImg("scans/min/0_254x256.pgm", data, 254, 256);
 
-	writeImg("scans/min/0_2032x32.pbm", data, 2032, 32);
-	writeImg("scans/min/0_1016x64.pbm", data, 1016, 64);
-	writeImg("scans/min/0_512x127.pbm", data, 512, 127);
-	writeImg("scans/min/0_508x128pbm", data, 508, 128);
-	writeImg("scans/min/0_256x254.pbm", data, 256, 254);*/
-
+	writeImg("scans/min/0_2032x32.pgm", data, 2032, 32);
+	writeImg("scans/min/0_1016x64.pgm", data, 1016, 64);
+	writeImg("scans/min/0_512x127.pgm", data, 512, 127);
+	writeImg("scans/min/0_508x128pgm", data, 508, 128);
+	writeImg("scans/min/0_256x254.pgm", data, 256, 254);*/
+/*
 	int repeatLen = sizeof(repeat) / sizeof(repeat[0]);
 	int repeatPktSize = sizeof(init[0]);
 	while (1)
@@ -139,19 +174,19 @@ int main(int argc, char * argv[])
 		}
 		//imgInfo(data, transferred);
 		//printImg(data, 128, 254);
-		writeImg("scans/254x128.pbm", data, 254, 128);
-		writeImg("scans/256x127.pbm", data, 256, 127);
-		writeImg("scans/508x64.pbm", data, 508, 64);
-		writeImg("scans/1016x32.pbm", data, 1016, 32);
-		writeImg("scans/2032x16.pbm", data, 2032, 16);
+		writeImg("scans/254x128.pgm", data, 254, 128);
+		writeImg("scans/256x127.pgm", data, 256, 127);
+		writeImg("scans/508x64.pgm", data, 508, 64);
+		writeImg("scans/1016x32.pgm", data, 1016, 32);
+		writeImg("scans/2032x16.pgm", data, 2032, 16);
 
-		writeImg("scans/128x254.pbm", data, 128, 254);
-		writeImg("scans/127x256.pbm", data, 127, 256);
-		writeImg("scans/64x508.pbm", data, 64, 508);
-		writeImg("scans/32x1016.pbm", data, 32, 1016);
-		writeImg("scans/16x2032.pbm", data, 16, 2032);
+		writeImg("scans/128x254.pgm", data, 128, 254);
+		writeImg("scans/127x256.pgm", data, 127, 256);
+		writeImg("scans/64x508.pgm", data, 64, 508);
+		writeImg("scans/32x1016.pgm", data, 32, 1016);
+		writeImg("scans/16x2032.pgm", data, 16, 2032);
 	}
-
+*/
 	libusb_release_interface(handle, DEV_INTF);
 	libusb_attach_kernel_driver(handle, DEV_INTF);
 	libusb_close(handle);

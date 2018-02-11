@@ -94,7 +94,7 @@ void fpi_ssm_free(struct fpi_ssm *machine)
 /* Invoke the state handler */
 static void __ssm_call_handler(struct fpi_ssm *machine)
 {
-	fp_dbg("%p entering state %d", machine, machine->cur_state);
+	//fp_dbg("%p entering state %d", machine, machine->cur_state);
 	machine->handler(machine);
 }
 

@@ -83,4 +83,6 @@ static unsigned char repeat_pkts[][EGIS0570_PKTSIZE] =
 	{ 0x45, 0x47, 0x49, 0x53, 0x06, 0x00, 0xfe }   /* image returned after this packet */
 };
 
+#define EGIS0570_BZ3_THRESHOLD 50
+
 #endif
