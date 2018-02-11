@@ -14,9 +14,9 @@ Files in repository root contain some source code for playground purposes.
 Work progress
 -------------
 
-1. (DONE) Catching Windows driver output
-2. (DONE) Understanding exchange protocol. Writing test Linux driver using *libusb*
-3. (DONE) Writing and integrating *libfprint* driver
-4. (WIP)  General testing and verification check
+1. **(DONE) Catching Windows driver output**
+2. **(DONE) Understanding exchange protocol. Writing test Linux driver using *libusb***
+3. **(DONE) Writing and integrating *libfprint* driver**
+4. **(WIP)**  General testing and verification check
 5. Adjusting threshold and cleaning repository
 6. Finish
