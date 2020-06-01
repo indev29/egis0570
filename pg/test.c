@@ -61,7 +61,7 @@ void writeImg(const char * filename, unsigned char * data, int width, int height
 		fputc(data[i] & 0xF0, fp);
 		fputc(' ', fp);
 	}*/
-		int i = 0;
+    int i = 0;
 	for (int x = 0; x < height; ++x)
 	{
 		for (int y = 0; y < width-1; ++y, ++i)
@@ -132,63 +132,9 @@ int main(int argc, char * argv[])
 	}
 	imgInfo(data, transferred);
 
-	writeRaw("scans/raw.bin", data, transferred);
-	// 1 bpp
-	writeImg("scans/254x128.pgm", data, 254, 128);
-	writeImg("scans/256x127.pgm", data, 256, 127);
-	writeImg("scans/508x64.pgm", data, 508, 64);
-	writeImg("scans/1016x32.pgm", data, 1016, 32);
-	writeImg("scans/2032x16.pgm", data, 2032, 16);
-
-	writeImg("scans/115x284.pgm", data, 115, 284);/* The proper image size is 114*57 and 5 image , the image below is have taken later about 0.0004 s  */
+    /* The proper image size is 114*57 and 5 image  */
+	writeImg("/egis0570_fingerprint.pgm", data, 115, 284);
 	
-	writeImg("scans/128x254.pgm", data, 128, 254);
-	writeImg("scans/127x256.pgm", data, 127, 256);
-	writeImg("scans/64x508.pgm", data, 64, 508);
-	writeImg("scans/32x1016.pgm", data, 32, 1016);
-	writeImg("scans/16x2032.pgm", data, 16, 2032);
-
-	// 0.5 bpp
-	/*writeImg("scans/min/0_32x2032.pgm", data, 32, 2032);
-	writeImg("scans/min/0_64x1016.pgm", data, 64, 1016);
-	writeImg("scans/min/0_127x512.pgm", data, 127, 512);
-	writeImg("scans/min/0_128x508.pgm", data, 128, 508);
-	writeImg("scans/min/0_254x256.pgm", data, 254, 256);
-
-	writeImg("scans/min/0_2032x32.pgm", data, 2032, 32);
-	writeImg("scans/min/0_1016x64.pgm", data, 1016, 64);
-	writeImg("scans/min/0_512x127.pgm", data, 512, 127);
-	writeImg("scans/min/0_508x128pgm", data, 508, 128);
-	writeImg("scans/min/0_256x254.pgm", data, 256, 254);*/
-/*
-	int repeatLen = sizeof(repeat) / sizeof(repeat[0]);
-	int repeatPktSize = sizeof(init[0]);
-	while (1)
-	{
-		for (int i = 0; i < repeatLen; ++i)
-		{
-			if (libusb_bulk_transfer(handle, DEV_EPOUT, repeat[i], repeatPktSize, &transferred, 0) != 0)
-				perror_exit("'Out' transfer error");
-
-			if (libusb_bulk_transfer(handle, DEV_EPIN, data, length, &transferred, 0) != 0)
-				perror_exit("'In' transfer error");
-			//printf("Read %d\n", transferred);
-		}
-		//imgInfo(data, transferred);
-		//printImg(data, 128, 254);
-		writeImg("scans/254x128.pgm", data, 254, 128);
-		writeImg("scans/256x127.pgm", data, 256, 127);
-		writeImg("scans/508x64.pgm", data, 508, 64);
-		writeImg("scans/1016x32.pgm", data, 1016, 32);
-		writeImg("scans/2032x16.pgm", data, 2032, 16);
-
-		writeImg("scans/128x254.pgm", data, 128, 254);
-		writeImg("scans/127x256.pgm", data, 127, 256);
-		writeImg("scans/64x508.pgm", data, 64, 508);
-		writeImg("scans/32x1016.pgm", data, 32, 1016);
-		writeImg("scans/16x2032.pgm", data, 16, 2032);
-	}
-*/
 	libusb_release_interface(handle, DEV_INTF);
 	libusb_attach_kernel_driver(handle, DEV_INTF);
 	libusb_close(handle);

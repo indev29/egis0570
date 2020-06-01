@@ -1,27 +1,19 @@
-# egis0570 (Closed)
+# egis0570
 
 This is the project focusing on creating Linux driver for Egis Technology Inc. ID 1c7a:0570 fingerprint scanner (also known as LighTuning Technology Inc.)
 
-**All work is stopped, see `Current state` for more information.**
+**Note, that this project is far from over and there is no way to setup fingerprint recognition right now.**
 
 Repository Content
 ------------------
 
-* `libfprint/`: <a href="https://www.freedesktop.org/wiki/Software/fprint/libfprint/">libfprint</a> repository with driver integrated
+* `libfprint/`: <a href="https://www.freedesktop.org/wiki/Software/fprint/libfprint/">libfprint</a> fork for driver intergration
 * `logs/`: usbpcap logs of Windows driver
-* `scans/`: fingerprint scans
-
-Files in repository root contain some source code for playground purposes.
+* `pg/`: playground environment to test device communication
 
 Current state
 -------------
 
-All general functions are ready, driver is succesfully integrated in libfprint, but there are some problems with matching algorythm.
-<br/>
-Seems like matching algorythm used by libfprint can't work with data from this device. The scan area is too small to detect enough minutiae.
-<br/>
-It is possible to try to work with it as a swipe-type sensor, but there is no guarantee and I currentry unable to do this work.
+All general functions were ready, driver was succesfully integrated in libfprint 0.7, although there were some problems with matching algorythm due to the incorrect image size used.
 
-If someone wants to try finishing my work, feel free to do it. Contact me if you have any questions: indev12@gmail.com
-<br/>
-This thread from libfprint mailing list may help you a little: https://lists.freedesktop.org/archives/fprint/2018-February/000983.html
+Right now the proper image size and overall device logic are disclosed. Hopefully, it will be possible to adapt old code to newer version of libfprint and add device support to further fprint releases.
