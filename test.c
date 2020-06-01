@@ -64,11 +64,11 @@ void writeImg(const char * filename, unsigned char * data, int width, int height
 		int i = 0;
 	for (int x = 0; x < height; ++x)
 	{
-		for (int y = 0; y < width; ++y, ++i)
+		for (int y = 0; y < width-1; ++y, ++i)
 		{
 			fputc(data[i], fp);
-			if (y < width - 1)
-				fputc(' ', fp);
+			/*  if (y < width - 1)
+				fputc(' ', fp); */
 		}
 		fputc('\n', fp);
 	}
@@ -140,6 +140,8 @@ int main(int argc, char * argv[])
 	writeImg("scans/1016x32.pgm", data, 1016, 32);
 	writeImg("scans/2032x16.pgm", data, 2032, 16);
 
+	writeImg("scans/115x284.pgm", data, 115, 284);/* The proper image size is 114*57 and 5 image , the image below is have taken later about 0.0004 s  */
+	
 	writeImg("scans/128x254.pgm", data, 128, 254);
 	writeImg("scans/127x256.pgm", data, 127, 256);
 	writeImg("scans/64x508.pgm", data, 64, 508);
