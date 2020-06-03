@@ -133,7 +133,7 @@ int main(int argc, char * argv[])
 	imgInfo(data, transferred);
 
     /* The proper image size is 114*57 and 5 image  */
-	writeImg("/egis0570_fingerprint.pgm", data, 115, 284);
+	writeImg("egis0570_fingerprint.pgm", data, 115, 284);
 	
 	libusb_release_interface(handle, DEV_INTF);
 	libusb_attach_kernel_driver(handle, DEV_INTF);

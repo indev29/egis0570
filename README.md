@@ -7,7 +7,7 @@ This is the project focusing on creating Linux driver for Egis Technology Inc. I
 Repository Content
 ------------------
 
-* `libfprint/`: <a href="https://www.freedesktop.org/wiki/Software/fprint/libfprint/">libfprint</a> fork for driver intergration
+* `libfprint/`: <a href="https://www.freedesktop.org/wiki/Software/fprint/libfprint/">libfprint</a> fork for driver intergration. Development repo is <a href="https://gitlab.freedesktop.org/indev29/libfprint">here</a>
 * `logs/`: usbpcap logs of Windows driver
 * `pg/`: playground environment to test device communication
 
