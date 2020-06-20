@@ -2,7 +2,7 @@
 
 This is the project focusing on creating Linux driver for Egis Technology Inc. ID 1c7a:0570 fingerprint scanner (also known as LighTuning Technology Inc.)
 
-**Note, that this project is far from over and there is no way to setup fingerprint recognition right now.**
+**Note, that this project is far from over and there is no way to setup fingerprint recognition right now. Follow <a href=https://gitlab.freedesktop.org/libfprint/libfprint/-/issues/162>this</a> libfprint issue to keep with development progress.**
 
 Repository Content
 ------------------
