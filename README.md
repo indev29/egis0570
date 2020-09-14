@@ -21,3 +21,7 @@ Driver succesfully integrated in libfprint 0.7, all general functions are ready.
 **2020-06**
 
 Found proper image size (thanks to @saeedark), adapted old code to libfprint 1.90. Recognition _doesn't_ work due to the libfprint matching algorithm (see <a href="https://gitlab.freedesktop.org/libfprint/libfprint/-/issues/162#note_544560">explanation</a>). Further work is not possible before proper matching algorithm is implemented in libfprint.
+
+**2020-09**
+
+@saeedark is <a href="https://gitlab.freedesktop.org/libfprint/libfprint/-/merge_requests/170">working on</a> a different approach that can help with matching problem.
